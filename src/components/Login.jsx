@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Alert, Card, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { login } from '../services/LoginService';
 
 const { Title } = Typography;
 
@@ -9,38 +8,27 @@ const Login = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const onFinish = async (values) => {
+  const onFinish = (values) => {
     const { username, password } = values;
     
     setLoading(true);
     setError('');
     
-    try {
-      const response = await login(username, password);
-      setLoading(false);
-      
-      if (response.success) {
-        // Call the callback function to notify the parent component of successful login
+    setTimeout(() => {
+      if (username === 'auditor' && password === '12345') {
+        setLoading(false);
         if (onLoginSuccess) {
-          onLoginSuccess(response);
+          onLoginSuccess({ success: true, user: { name: 'Auditor Externo' } });
         }
       } else {
-        setError('Error de inicio de sesión: ' + response.message);
+        setLoading(false);
+        setError('Credenciales inválidas. Intente con "auditor" y "12345".');
       }
-    } catch (error) {
-      setLoading(false);
-      setError('Error de inicio de sesión: ' + (error.message || 'Credenciales inválidas'));
-    }
+    }, 500);
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      background: '#f0f2f5'
-    }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>
       <Card style={{ width: 400, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <Title level={2}>Sistema de Auditoría de Riesgos</Title>
@@ -49,49 +37,21 @@ const Login = ({ onLoginSuccess }) => {
         
         {error && <Alert message={error} type="error" showIcon style={{ marginBottom: 16 }} />}
         
-        <Form
-          name="login"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          layout="vertical"
-        >
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Por favor ingresa tu nombre de usuario' }]}
-          >
-            <Input 
-              prefix={<UserOutlined />} 
-              placeholder="Usuario" 
-              size="large"
-            />
+        <Form name="login" initialValues={{ remember: true }} onFinish={onFinish} layout="vertical">
+          <Form.Item name="username" rules={[{ required: true, message: 'Por favor ingresa tu nombre de usuario' }]}>
+            <Input prefix={<UserOutlined />} placeholder="Usuario" size="large" />
           </Form.Item>
-          
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Por favor ingresa tu contraseña' }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Contraseña"
-              size="large"
-            />
+          <Form.Item name="password" rules={[{ required: true, message: 'Por favor ingresa tu contraseña' }]}>
+            <Input.Password prefix={<LockOutlined />} placeholder="Contraseña" size="large" />
           </Form.Item>
-          
           <Form.Item>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              loading={loading}
-              block
-              size="large"
-            >
+            <Button type="primary" htmlType="submit" loading={loading} block size="large">
               Iniciar Sesión
             </Button>
           </Form.Item>
-          
           <div style={{ textAlign: 'center' }}>
-            <p>Usuario de demo: admin</p>
-            <p>Contraseña: 123456</p>
+            <p>Usuario de prueba: auditor</p>
+            <p>Contraseña: 12345</p>
           </div>
         </Form>
       </Card>
@@ -100,4 +60,3 @@ const Login = ({ onLoginSuccess }) => {
 };
 
 export default Login;
-
