@@ -13,122 +13,100 @@ Albert Kenyi Apaza Ccalle
 https://github.com/AlbertApaza/EXAUI-AUDITORIA
 
 ---
+# Informe de Auditoría de Sistemas - Examen de la Unidad I
+
+**Nombres y apellidos:**  
+**Fecha:**  
+**URL GitHub:**  
+
+---
 
 ## 1. Proyecto de Auditoría de Riesgos
 
 ### Login
+**Evidencia:**  
+![Captura del login](assets/1.png)  
+![Captura del login](assets/1-1.png)  
 
-**Evidencia:**
-
-![Captura del login](assets/1.png)
-
-**Descripción:**
-
-*Se implementó una funcionalidad de inicio de sesión ficticia sin conexión a base de datos. El sistema valida un usuario y contraseña predefinidos en el código fuente. Si las credenciales son correctas, el usuario es redirigido al panel principal de la herramienta de auditoría.*
+**Descripción:**  
+El inicio de sesión es ficticio y se realiza completamente en el frontend, sin conexión a un servidor ni base de datos. La validación ocurre en la función onFinish del formulario de React, comparando los valores ingresados con credenciales predefinidas (usuario: "auditor" y contraseña: "12345"). Si coinciden, se considera un login exitoso y se llama a onLoginSuccess; si no, se muestra un mensaje de error. Esto permite probar la funcionalidad de acceso sin necesidad de un backend real.
 
 ### Motor de Inteligencia Artificial
+**Evidencia:**  
+![Captura de la sección del código fuente mejorado de IA](assets/2.png)  
 
-**Evidencia:**
-
-![Captura del código de IA](assets/2.png)
-
-**Descripción:**
-
-*El motor de IA fue mejorado para interactuar con un modelo de lenguaje avanzado ejecutado localmente. La función principal recibe el nombre y tipo de un activo de información, procesa esta entrada y genera automáticamente un análisis que incluye perfiles de riesgo, impacto potencial y recomendaciones de mitigación alineadas con los controles de la norma ISO 27001. Este fragmento de código es el responsable de gestionar la comunicación con el modelo y formatear la respuesta para el usuario.*
+**Descripción:**  
+Este modelo implementa una API en Flask que permite analizar riesgos de activos tecnológicos y sugerir tratamientos según la norma ISO 27000, usando un modelo de inteligencia artificial (llama3) para generar automáticamente listas de riesgos e impactos asociados a un activo y proponer medidas correctivas o preventivas en base a la información proporcionada por el usuario.
 
 ---
 
 ## 2. Hallazgos
 
 ### Activo 1: Servidor de base de datos
+**Evidencia:**  
+![Captura del activo 1](assets/3.png)  
 
-**Evidencia:**
+**Riesgo:**  
+Acceso no autorizado
+**Impacto	:**  
+terceros pueden acceder a los datos almacenados en el servidor de bases de datos sin permiso, lo que podría llevar a la revelación de información confidencial y daño a la reputación de la organización
 
-![Captura del hallazgo del Activo 1](assets/3.png)
+**Tratamiento (ISO 27001)	:**  
+Implementar autenticación multisecuencia y utilizar credenciales fuertes para controlar acceso a los datos; limitar el acceso solo a aquellos que sean necesarios y autorizados.
 
-**Condición:**
 
-*Durante la evaluación, se constató que el servidor de base de datos que almacena información de clientes no tiene habilitado el cifrado de datos en reposo (TDE - Transparent Data Encryption). Esto expone la información a accesos no autorizados en caso de una brecha de seguridad física o un acceso indebido a los archivos de la base de datos.*
-
-**Recomendación:**
-
-*Se recomienda habilitar de forma inmediata el cifrado TDE en todas las bases de datos que contengan información sensible. Adicionalmente, se debe reforzar el control de acceso físico a los servidores y auditar regularmente los permisos de acceso a los archivos de la base de datos.*
-
-**Riesgo:**
-*   **Probabilidad:** Alta
-
----
 
 ### Activo 2: API Transacciones
+**Evidencia:**  
+![Captura del activo 2](assets/4.png)  
+**Riesgo:**  
+Inseguridad en la autenticación y autorización
+**Impacto	:**  
+la API no verifica adecuadamente la identidad de los usuarios y permite transacciones no autorizadas, lo que puede llevar a la pérdida o alteración de datos confidenciales
 
-**Evidencia:**
+**Tratamiento (ISO 27001)	:**  
+Implementar Autenticación JWT (JSON Web Token) con validación en ambos extremos (servidor y cliente), para asegurar la autenticidad y autorización de las transacciones.
 
-![Captura del hallazgo del Activo 2](assets/4.png)
 
-**Condición:**
 
-*La API utilizada para las transacciones bancarias no implementa un mecanismo de limitación de tasa (rate limiting). Esta ausencia la hace vulnerable a ataques de Denegación de Servicio (DoS) a través de la inundación de peticiones, así como a ataques de fuerza bruta para la enumeración de datos de usuarios o transacciones.*
 
-**Recomendación:**
+### Activo 3: Aplicación Web de Banca 
+**Evidencia:**  
+![Captura del activo 3](assets/7.png)  
+**Riesgo:**  
+Ataque de Inyección de Script
+**Impacto	:**  
+un atacante ingiere código malintencionado en la aplicación web para obtener acceso indebidamente a las cuentas bancarias y comprometer los datos personales y financieros
 
-*Implementar una política de limitación de tasa en el API Gateway. Se sugiere limitar el número de peticiones por IP o por token de usuario a un umbral razonable (ej. 100 peticiones por minuto) para mitigar el riesgo de abuso y garantizar la disponibilidad del servicio.*
+**Tratamiento (ISO 27001)	:**  
+Implementar una validación de entrada robusta para prevenir la inyección de script y realizar análisis estáticos de seguridad regularmente en el código fuente de la aplicación web.
 
-**Riesgo:**
-*   **Probabilidad:** Media
 
----
 
-### Activo 3: Aplicación Web de Banca
 
-**Evidencia:**
-
-![Captura del hallazgo del Activo 3](assets/5.png)
-
-**Condición:**
-
-*Se ha identificado que los encabezados de seguridad HTTP (como Content-Security-Policy, Strict-Transport-Security y X-Frame-Options) no están configurados correctamente en la aplicación web de la banca. Esta omisión aumenta la exposición a ataques de tipo Cross-Site Scripting (XSS), clickjacking y Man-in-the-Middle.*
-
-**Recomendación:**
-
-*Configurar y reforzar los encabezados de seguridad HTTP en el servidor web. Es crucial implementar una política de seguridad de contenido (CSP) estricta, forzar el uso de HTTPS con HSTS y prevenir que el sitio sea cargado en iframes de dominios no autorizados mediante X-Frame-Options.*
-
-**Riesgo:**
-*   **Probabilidad:** Alta
-
----
 
 ### Activo 4: Servidor de Correo
+**Evidencia:**  
+![Captura del activo 4](assets/7.png)  
 
-**Evidencia:**
+**Riesgo:**  
+Acceso no autorizado
+**Impacto	:**  
+terceros pueden acceder a correos electrónicos o información almacenada en el servidor de correo electrónico sin permiso, lo que podría llevar a la revelación de datos confidenciales
+**Tratamiento (ISO 27001)	:**  
+Implementar autenticación y autorización robusta para acceso al servidor, utilizando medidas de seguridad como autenticación multifactorial y monitorización de actividad irregular.
 
-![Captura del hallazgo del Activo 4](assets/6.png)
 
-**Condición:**
 
-*El servidor de correo corporativo no tiene implementados los protocolos de autenticación de correo electrónico DMARC, DKIM y SPF. Esta carencia facilita que actores maliciosos puedan suplantar la identidad del dominio del banco (spoofing) para realizar ataques de phishing dirigidos a clientes y empleados.*
-
-**Recomendación:**
-
-*Configurar los registros SPF, DKIM y DMARC en el DNS del dominio del banco. Se debe iniciar con una política DMARC de "none" para monitorear, y progresivamente ajustarla a "quarantine" y finalmente a "reject" para bloquear activamente los correos no autenticados.*
-
-**Riesgo:**
-*   **Probabilidad:** Media
-
----
 
 ### Activo 5: Firewall Perimetral
 
-**Evidencia:**
+**Evidencia:**  
+![Captura del activo 5](assets/7.png)  
 
-![Captura del hallazgo del Activo 5](assets/7.png)
-
-**Condición:**
-
-*La revisión de las reglas del firewall perimetral reveló la existencia de reglas obsoletas y excesivamente permisivas (ej. "any-any"). Específicamente, se encontraron puertos abiertos para servicios que fueron descontinuados, lo cual incrementa la superficie de ataque de la red interna sin ninguna justificación operativa.*
-
-**Recomendación:**
-
-*Realizar una auditoría exhaustiva y periódica (trimestral) de todas las reglas del firewall. Se debe implementar una política de "denegación por defecto" y eliminar todas las reglas que no estén asociadas a un requerimiento de negocio vigente y documentado.*
-
-**Riesgo:**
-*   **Probabilidad:** Baja
+**Riesgo:**  
+Fallos en el mantenimiento
+**Impacto	:**  
+es posible que el firewall perimetral no esté correctamente configurado o actualizado, lo que deja brechas en la seguridad y permite accesos no autorizados a la red
+**Tratamiento (ISO 27001)	:**  
+Realizar un análisis de vulnerabilidades y implementar un plan de actualización y pruebas para asegurarse del correcto funcionamiento del firewall perimetral.
